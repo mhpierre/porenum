@@ -1,0 +1,805 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Multivariate Newton method &#8212; PoreNum</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'systems/2_MultivariateNewton';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Thermal pressurization in an undrained porous solid" href="3_SimpleNonlinearSystem.html" />
+    <link rel="prev" title="Introduction to Newton’s (Newton-Raphson) method" href="1_Introduction.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/PoreNum.png" class="logo__image only-light" alt="PoreNum - Home"/>
+    <img src="../_static/PoreNum.png" class="logo__image only-dark pst-js-only" alt="PoreNum - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to PoreNum: Poromechanics with Numerical implementations
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory.html">Theory of poromechanics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory/thermodynamics.html">Thermodynamics of porous continua</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/constitutive.html">Constitutive relationships of porous media</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../systems.html">Solving equation systems</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="0_Warmup.html">A short introduction on solving equation systems numerically for poromechanics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1_Introduction.html">Introduction to Newton’s (Newton-Raphson) method</a></li>
+
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Multivariate Newton method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_SimpleNonlinearSystem.html">Thermal pressurization in an undrained porous solid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4_ImplicitSchemes.html">Numerical integration of differential equations : Explicit and implicit schemes</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../numerical_ex.html">Numerical implementation in poromechanics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_ex/5_HardeningPlasticity.html">A simple istropic hardening plasticity algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_ex/6_1D_Poroplasticity.html">Coupled plasticity example: Thermal softening of a poroplastic solid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_ex/7_VectorTensorNotations.html">Vector notations for tensors for easy implementation of tensor algebra</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fsystems/2_MultivariateNewton.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/systems/2_MultivariateNewton.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Multivariate Newton method</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-newton-s-method-with-numerical-approximation-of-the-jacobian">Bonus: Newton’s method with numerical approximation of the jacobian</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="multivariate-newton-method">
+<h1>Multivariate Newton method<a class="headerlink" href="#multivariate-newton-method" title="Link to this heading">#</a></h1>
+<p>We now know from the basic idea behind Newton’s method and how to implement it simply in <code class="docutils literal notranslate"><span class="pre">python</span></code>, in the case of function of a real variable. <br />
+However, problems in continuum mechanics often involve systems of equations and/or vector/tensor variables. In this tutorial, we will walk through a simple 2D case: 2 unknowns, 2 equations. <br />
+We will consider two planar curves, of following equations:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split} 
+(E) : \left\{
+\begin{array}{}
+f_1(x_1,x_2) = \left(x_1-\frac{1}{2}\right)^2 + 2\left(x_2+\frac{1}{2}\right)^2 - 1, \\
+f_2(x_1,x_2) = \cos(x_2)x_1^2 + \cos(x_1)x_2^2 - \frac{1}{2}.
+\end{array}
+\right.
+\end{split}\]</div>
+<p><span class="math notranslate nohighlight">\(f_1\)</span> is the equation to an ellipse and <span class="math notranslate nohighlight">\(f_2\)</span> to an ellipse modified with a cosinus factor. Solving this system of equations amounts to finding the intersection between these two ellipse-like curves in the <span class="math notranslate nohighlight">\((x_1,x_2)\)</span> plane. <br />
+Let us first define the two functions <span class="math notranslate nohighlight">\(f_1\)</span> and <span class="math notranslate nohighlight">\(f_2\)</span> and plot the two curves. For this, we will use a <code class="docutils literal notranslate"><span class="pre">contour</span></code> plot and display only the contour corresponding to a value of the function equal to 0.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">f1</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">x2</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">f2</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span> <span class="o">*</span> <span class="n">x1</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span> <span class="o">*</span> <span class="n">x2</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mf">0.5</span>
+
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">gc</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">X1</span><span class="p">,</span> <span class="n">X2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">f1</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">f2</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$x_1$&quot;</span><span class="p">)</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$x_2$&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;$x_2$&#39;)
+</pre></div>
+</div>
+<img alt="../_images/da56795bd9b45231eba63101916e017a3a033ea7f832afae32243bcf6aae7c03.png" src="../_images/da56795bd9b45231eba63101916e017a3a033ea7f832afae32243bcf6aae7c03.png" />
+</div>
+</div>
+<p>As we can see, the two curves intersect in two locations. Let us see if we can find one of these intersections using Newton’s method. Rather than scalar values, we will now deal with a vector unknown:
+$<span class="math notranslate nohighlight">\( X = \begin{bmatrix}
+x_1 \\
+x_2
+\end{bmatrix}.
+\)</span><span class="math notranslate nohighlight">\(
+Our residue can also be seen as a vector:
+\)</span><span class="math notranslate nohighlight">\(
+F(X) = \begin{bmatrix}
+f_1(X) \\
+f_2(X)
+\end{bmatrix}.
+\)</span>$</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">F</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>  <span class="c1"># Defining the residu and unknown as vectors</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">X</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f1</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">),</span> <span class="n">f2</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, we have to have an equivalent of the derivative of <span class="math notranslate nohighlight">\(F\)</span>. In function of two variables, the differential of the function is defined as such:
+$<span class="math notranslate nohighlight">\(
+g : (x_1, x_2) \rightarrow g(x_1, x_2),
+\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(
+\mathrm{d}g = \frac{\partial g}{\partial x_1}\mathrm{d}x_1 + \frac{\partial g}{\partial x_2}\mathrm{d}x_2,
+\)</span><span class="math notranslate nohighlight">\(
+which can be seen as the following dot product:
+\)</span><span class="math notranslate nohighlight">\(
+\mathrm{d}g =
+\begin{bmatrix}
+\frac{\partial g}{\partial x_1} &amp; \frac{\partial g}{\partial x_2}
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+\mathrm{d}x_1 \\
+\mathrm{d}x_2
+\end{bmatrix}
+\)</span><span class="math notranslate nohighlight">\(
+For our case, we have a system consisting of two equations. We could abusively write:
+\)</span><span class="math notranslate nohighlight">\(
+\mathrm{d}F = \begin{bmatrix}
+\frac{\partial f_1}{\partial x_1} &amp; \frac{\partial f_1}{\partial x_2} \\
+\frac{\partial f_2}{\partial x_1} &amp; \frac{\partial f_2}{\partial x_2}
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+\mathrm{d}x_1 \\
+\mathrm{d}x_2
+\end{bmatrix}=
+J\cdot \mathrm{d}X,
+\)</span><span class="math notranslate nohighlight">\(
+where \)</span>J<span class="math notranslate nohighlight">\( is called the jacobian matrix of the system, playing the same role as the derivative in the 1D case. \
+Note that generalization to \)</span>n<span class="math notranslate nohighlight">\( dimensions is quite straightforward:
+\)</span><span class="math notranslate nohighlight">\(
+J = \begin{bmatrix}
+\frac{\partial f_1}{\partial x_1} &amp; \cdots &amp; \frac{\partial f_1}{\partial x_n} \\
+\vdots &amp; \ddots &amp; \vdots \\
+\frac{\partial f_n}{\partial x_1} &amp; \cdots &amp;\frac{\partial f_n}{\partial x_n}
+\end{bmatrix}=
+\left( \frac{\partial f_i}{\partial x_j} \right)_{(i,j)}.
+\)</span>$
+Let us implement the jacobian matrix of our system:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">J</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">X</span>
+
+    <span class="n">df1_dx1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">df1_dx2</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">x2</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">df2_dx1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span> <span class="o">*</span> <span class="n">x1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span> <span class="o">*</span> <span class="n">x2</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">df2_dx2</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span> <span class="o">*</span> <span class="n">x1</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span> <span class="o">*</span> <span class="n">x2</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">df1_dx1</span><span class="p">,</span> <span class="n">df1_dx2</span><span class="p">],</span> <span class="p">[</span><span class="n">df2_dx1</span><span class="p">,</span> <span class="n">df2_dx2</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Continuing our parallels with the 1D method, the iteration will be the following:
+$<span class="math notranslate nohighlight">\(
+X_{n+1} = X_n - J^{-1}(X_n)\cdot F(X_n).
+\)</span><span class="math notranslate nohighlight">\(
+This of course requires \)</span>J(X_n)<span class="math notranslate nohighlight">\( to be non-singular, just as the 1D method required the derivative to be non-zero. \
+Evaluation of the convergence will be done through the norm of the residu, with the following convergence criterion for a precision \)</span>\varepsilon &gt; 0<span class="math notranslate nohighlight">\(:
+\)</span><span class="math notranslate nohighlight">\(
+\| F(X_n)\| \leq \varepsilon
+\)</span>$</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">newton_method</span><span class="p">(</span><span class="n">residu</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">,</span> <span class="n">initial_guess</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">max_iteration</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+    <span class="n">X_n</span> <span class="o">=</span> <span class="n">initial_guess</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="p">[</span><span class="n">initial_guess</span><span class="p">]</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">residu</span><span class="p">(</span><span class="n">X_n</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">tolerance</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&lt;</span> <span class="n">max_iteration</span><span class="p">:</span>
+        <span class="n">X_n</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">X_n</span><span class="p">)),</span> <span class="n">residu</span><span class="p">(</span><span class="n">X_n</span><span class="p">))</span>
+
+        <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X_n</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;Iteration </span><span class="si">{}</span><span class="s2">: X_</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{}</span><span class="s2">, residual norm = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">iteration</span><span class="p">,</span> <span class="n">iteration</span><span class="p">,</span> <span class="n">X_n</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">residu</span><span class="p">(</span><span class="n">X_n</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">residu</span><span class="p">(</span><span class="n">X_n</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">tolerance</span><span class="p">:</span>  <span class="c1"># Not converged</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Did not converge after </span><span class="si">{}</span><span class="s2"> iterations.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Converged</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converged in </span><span class="si">{}</span><span class="s2"> iterations.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us test the algorithm with the following initial guess:
+$<span class="math notranslate nohighlight">\(
+X_0 = \begin{bmatrix}
+1 \\
+1
+\end{bmatrix},
+\)</span><span class="math notranslate nohighlight">\(
+and a tolerance of \)</span>10^{-12}$:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-12</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">newton_method</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">X_0</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+
+<span class="n">gc</span><span class="o">.</span><span class="n">scatter</span><span class="p">((</span><span class="n">result</span><span class="o">.</span><span class="n">T</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">T</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">((</span><span class="n">result</span><span class="o">.</span><span class="n">T</span><span class="p">)[</span><span class="mi">0</span><span class="p">])):</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$X_</span><span class="si">{}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="n">fig</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 1: X_1 = [-1.16354061  0.7355901 ], residual norm = 4.873923550407763
+Iteration 2: X_2 = [-0.44811073  0.24180988], residual norm = 1.0308400594810303
+Iteration 3: X_3 = [-1.08958918 -0.50496602], residual norm = 1.662217912549292
+Iteration 4: X_4 = [-0.61732745  0.77567863], residual norm = 3.5129690661173005
+Iteration 5: X_5 = [-5.01659984 -1.837438  ], residual norm = 33.57284591095184
+Iteration 6: X_6 = [-2.18691142 -1.50287348], residual norm = 8.363108124504286
+Iteration 7: X_7 = [-0.53139983 -1.66875248], residual norm = 3.3652219107890797
+Iteration 8: X_8 = [-0.65186082 -1.01758013], residual norm = 1.02107086924232
+Iteration 9: X_9 = [-0.66900613 -0.58186993], residual norm = 0.4047801709702487
+Iteration 10: X_10 = [-0.50439679 -0.59676535], residual norm = 0.035386795906236765
+Iteration 11: X_11 = [-0.49395714 -0.57979421], residual norm = 0.0006918466773638073
+Iteration 12: X_12 = [-0.49358518 -0.57996463], residual norm = 2.712247182495904e-07
+Iteration 13: X_13 = [-0.49358511 -0.57996448], residual norm = 5.443762116474124e-14
+Converged in 13 iterations.
+</pre></div>
+</div>
+<img alt="../_images/28ae65a4f47d368d754299e8e2cdf67aefbaf5f36c5250299e9634341fa5421f.png" src="../_images/28ae65a4f47d368d754299e8e2cdf67aefbaf5f36c5250299e9634341fa5421f.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_0</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">newton_method</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">X_0</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+
+<span class="n">gc</span><span class="o">.</span><span class="n">scatter</span><span class="p">((</span><span class="n">result</span><span class="o">.</span><span class="n">T</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">T</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">((</span><span class="n">result</span><span class="o">.</span><span class="n">T</span><span class="p">)[</span><span class="mi">0</span><span class="p">])):</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$X_</span><span class="si">{}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+<span class="n">fig</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 1: X_1 = [0.83077947 0.25      ], residual norm = 0.3153118504023826
+Iteration 2: X_2 = [0.70119693 0.20043714], residual norm = 0.025061800182344454
+Iteration 3: X_3 = [0.69291786 0.1938794 ], residual norm = 0.00016580339243585336
+Iteration 4: X_4 = [0.6928807  0.19382888], residual norm = 6.712149921298664e-09
+Iteration 5: X_5 = [0.6928807  0.19382888], residual norm = 0.0
+Converged in 5 iterations.
+</pre></div>
+</div>
+<img alt="../_images/188c02a1edd6b5a24ea275aebddeaa94e45be91eac2ca4e87d24b21879f121c7.png" src="../_images/188c02a1edd6b5a24ea275aebddeaa94e45be91eac2ca4e87d24b21879f121c7.png" />
+</div>
+</div>
+<section id="bonus-newton-s-method-with-numerical-approximation-of-the-jacobian">
+<h2>Bonus: Newton’s method with numerical approximation of the jacobian<a class="headerlink" href="#bonus-newton-s-method-with-numerical-approximation-of-the-jacobian" title="Link to this heading">#</a></h2>
+<p>Calculating the Jacobian matrix of the system can be pretty tedious at times (especially later when dealing with tensorial equations for instance). An alternative way consists in using an numerical approximate of the jacobian obtained by a small perturbation <span class="math notranslate nohighlight">\(\eta\)</span>. The partial derivatives, components of the jacobian matrix can be approximated as: <br />
+$<span class="math notranslate nohighlight">\(
+\frac{\partial f_i}{\partial x_j}\left( (\tilde{x}_k)_{1\leq k \leq n}\right) \simeq \frac{ f_i( (\tilde{x_k} + \delta_{jk}\eta)_{1\leq k\leq n}) - f_i( (\tilde{x_k} - \delta_{jk}\eta)_{1\leq k\leq n})}{ 2\eta },
+\)</span><span class="math notranslate nohighlight">\(
+where \)</span>\delta_{jk}<span class="math notranslate nohighlight">\( is Kronecker's delta. Let us implement it for our previous case and test it with \)</span>x_0 = [1,1]$.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">numerical_J</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">residu</span><span class="p">,</span> <span class="n">perturbation</span><span class="p">):</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">X</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="mi">1</span>
+        <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">perturbation</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">residu</span><span class="p">([</span><span class="n">x1</span> <span class="o">+</span> <span class="n">perturbation</span><span class="p">,</span> <span class="n">x2</span><span class="p">])</span> <span class="o">-</span> <span class="n">residu</span><span class="p">([</span><span class="n">x1</span> <span class="o">-</span> <span class="n">perturbation</span><span class="p">,</span> <span class="n">x2</span><span class="p">]),</span>
+                <span class="n">residu</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">+</span> <span class="n">perturbation</span><span class="p">])</span> <span class="o">-</span> <span class="n">residu</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">-</span> <span class="n">perturbation</span><span class="p">]),</span>
+            <span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="p">)</span>
+
+
+<span class="n">X_0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">1e-9</span>  <span class="c1"># Perturbation magnitude for the numerical jacobian</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">newton_method</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">X</span><span class="p">:</span> <span class="n">numerical_J</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">eta</span><span class="p">),</span> <span class="n">X_0</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 1: X_1 = [-1.16354098  0.73559022], residual norm = 4.873925375641496
+Iteration 2: X_2 = [-0.44811051  0.2418101 ], residual norm = 1.0308403361762342
+Iteration 3: X_3 = [-1.08959006 -0.50496631], residual norm = 1.662221073447772
+Iteration 4: X_4 = [-0.61732806  0.7756517 ], residual norm = 3.5128313761769663
+Iteration 5: X_5 = [-5.01396371 -1.83633989], residual norm = 33.534127392120624
+Iteration 6: X_6 = [-2.1861345  -1.50141289], residual norm = 8.351347754237727
+Iteration 7: X_7 = [-0.53290208 -1.66633896], residual norm = 3.3536872195338487
+Iteration 8: X_8 = [-0.65264404 -1.01581128], residual norm = 1.0183452046258314
+Iteration 9: X_9 = [-0.66903454 -0.58033439], residual norm = 0.4040321174125505
+Iteration 10: X_10 = [-0.50434962 -0.59743717], residual norm = 0.03587888597659178
+Iteration 11: X_11 = [-0.49398101 -0.579788  ], residual norm = 0.0007383384770054459
+Iteration 12: X_12 = [-0.49358519 -0.57996465], residual norm = 3.0241302424738754e-07
+Iteration 13: X_13 = [-0.49358511 -0.57996448], residual norm = 6.762862292843738e-14
+Converged in 13 iterations.
+</pre></div>
+</div>
+</div>
+</div>
+<p>If we look closely at the residual value, we can see that we lost some precision compared to the exact jacobian. However, it did not affect our convergence overall.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./systems"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="1_Introduction.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Introduction to Newton’s (Newton-Raphson) method</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="3_SimpleNonlinearSystem.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Thermal pressurization in an undrained porous solid</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-newton-s-method-with-numerical-approximation-of-the-jacobian">Bonus: Newton’s method with numerical approximation of the jacobian</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Maxime PIERRE
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,735 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Numerical integration of differential equations : Explicit and implicit schemes &#8212; PoreNum</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'systems/4_ImplicitSchemes';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Numerical implementation in poromechanics" href="../numerical_ex.html" />
+    <link rel="prev" title="Thermal pressurization in an undrained porous solid" href="3_SimpleNonlinearSystem.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/PoreNum.png" class="logo__image only-light" alt="PoreNum - Home"/>
+    <img src="../_static/PoreNum.png" class="logo__image only-dark pst-js-only" alt="PoreNum - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to PoreNum: Poromechanics with Numerical implementations
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory.html">Theory of poromechanics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory/thermodynamics.html">Thermodynamics of porous continua</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/constitutive.html">Constitutive relationships of porous media</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../systems.html">Solving equation systems</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="0_Warmup.html">A short introduction on solving equation systems numerically for poromechanics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1_Introduction.html">Introduction to Newton’s (Newton-Raphson) method</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="2_MultivariateNewton.html">Multivariate Newton method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_SimpleNonlinearSystem.html">Thermal pressurization in an undrained porous solid</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Numerical integration of differential equations : Explicit and implicit schemes</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../numerical_ex.html">Numerical implementation in poromechanics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_ex/5_HardeningPlasticity.html">A simple istropic hardening plasticity algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_ex/6_1D_Poroplasticity.html">Coupled plasticity example: Thermal softening of a poroplastic solid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_ex/7_VectorTensorNotations.html">Vector notations for tensors for easy implementation of tensor algebra</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fsystems/4_ImplicitSchemes.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/systems/4_ImplicitSchemes.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Numerical integration of differential equations : Explicit and implicit schemes</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="numerical-integration-of-differential-equations-explicit-and-implicit-schemes">
+<h1>Numerical integration of differential equations : Explicit and implicit schemes<a class="headerlink" href="#numerical-integration-of-differential-equations-explicit-and-implicit-schemes" title="Link to this heading">#</a></h1>
+<p>Problems in poromechanics will sometimes require to solve differential equations. Think for instance about hardening laws in plasticity, which can take such forms:</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{p}_c = -h\mathrm{tr}(\underline{\underline{\dot{\varepsilon}}}^p)\cdot p_c.
+\]</div>
+<p>Differential equation often don’t have obvious analytical solutions, and must thus be integrated numerically. To do so, we discretize the domain (in our case, time) to approximate the derivative. <br />
+Take for instance the following Cauchy problem:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left\{
+\begin{align}
+\frac{\mathrm{d}f}{\mathrm{d}t}&amp;=-f(t), \\
+f(0)&amp;=1.\\
+\end{align}
+\right.
+\end{split}\]</div>
+<p>Let us use a discretization step <span class="math notranslate nohighlight">\(\Delta t\)</span> and denote <span class="math notranslate nohighlight">\(f_0,\dots,f_n\)</span> the quantities <span class="math notranslate nohighlight">\(f(t_0=0),\dots,f(t_n=n\Delta t)\)</span> respectively. <br />
+We then have</p>
+<div class="math notranslate nohighlight">
+\[
+\left(\frac{\mathrm{d}f}{\mathrm{d}t}\right)_k \simeq \frac{f_{k+1}-f_k}{\Delta t}.
+\]</div>
+<p>Recursively, knowing <span class="math notranslate nohighlight">\(f_k\)</span> we could express f_{k+1} through:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{f_{k+1}-f_k}{\Delta t} = -f_k,
+\]</div>
+<p>so that</p>
+<div class="math notranslate nohighlight">
+\[
+f_{k+1} = f_k + \Delta t f_k.
+\]</div>
+<p>In this way, <span class="math notranslate nohighlight">\(f_{k+1}\)</span> is defined <em><strong>explicitly</strong></em> from <span class="math notranslate nohighlight">\(f_k\)</span>: this integration scheme is thus called <em><strong>explicit</strong></em>. This particular method is called <em><strong>Forward Euler</strong></em>. <br />
+Let us implement it for the above differential equation. Its analytical solution is indeed trivial:</p>
+<div class="math notranslate nohighlight">
+\[
+f:t\rightarrow\exp(-t).
+\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">f_0</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">t_max</span> <span class="o">=</span> <span class="mi">20</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">forward_euler</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="p">[</span><span class="n">f_0</span><span class="p">]</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">t_max</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">t_max</span> <span class="o">/</span> <span class="n">dt</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">f_k</span> <span class="o">=</span> <span class="n">F</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f_k</span> <span class="o">-</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">f_k</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">T</span><span class="p">,</span> <span class="n">F</span>
+
+
+<span class="c1"># Analytical solution</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">T</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">forward_euler</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta t=0.5$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">forward_euler</span><span class="p">(</span><span class="mf">0.05</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta t=0.05$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="s2">&quot;r--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Analytical&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x107539be0&gt;
+</pre></div>
+</div>
+<img alt="../_images/a12a83a048ccc2e9feebfe75fd343ec174f116001a3863e308bfcb850806a71a.png" src="../_images/a12a83a048ccc2e9feebfe75fd343ec174f116001a3863e308bfcb850806a71a.png" />
+</div>
+</div>
+<p>We can see that as our discretization step <span class="math notranslate nohighlight">\(\Delta t\)</span> decreases, the numerical solution converges towards the analytical solution. Let us try to <em><strong>increase</strong></em> the time step and see what happens (for instance, <span class="math notranslate nohighlight">\(\Delta t =2\)</span> and <span class="math notranslate nohighlight">\(\Delta t=2.5\)</span>):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">forward_euler</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta t=2$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">forward_euler</span><span class="p">(</span><span class="mf">2.5</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta t=2.5$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="s2">&quot;r--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Analytical&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x10780a210&gt;
+</pre></div>
+</div>
+<img alt="../_images/430aa3b55435af4b5dc5ad2a59df4a11b9ccb64c0e11bee4dd6f0a3be6cd136c.png" src="../_images/430aa3b55435af4b5dc5ad2a59df4a11b9ccb64c0e11bee4dd6f0a3be6cd136c.png" />
+</div>
+</div>
+<p>In that case, the numerical solution no longer converges towards the analytical solution, but rather oscillates periodically for <span class="math notranslate nohighlight">\(\Delta t = 2\)</span> and outright diverges for <span class="math notranslate nohighlight">\(\Delta t = 2.5\)</span>. The numerical method is thus instable for higher time steps. <br />
+This particular case can be addressed analytically: at each time step, we have <span class="math notranslate nohighlight">\(f_{k+1}= f_k -\Delta t f_k = (1-\Delta t)f_k\)</span>. By trivial recursion:</p>
+<div class="math notranslate nohighlight">
+\[
+f_{k+1} = (1-\Delta t)f_k = (1-\Delta t)^2 f_{k-1} = \dots = (1-\Delta t)^{k+1}f_0 = (1-\Delta t)^{k+1}.
+\]</div>
+<p>It becomes apparent now that if <span class="math notranslate nohighlight">\(\Delta t=2\)</span>, <span class="math notranslate nohighlight">\(f_k = (-1)^k\)</span> thus the oscillation, whereas if <span class="math notranslate nohighlight">\(\Delta t &gt;2\)</span> then <span class="math notranslate nohighlight">\(1-\Delta t &gt;1\)</span> so that <span class="math notranslate nohighlight">\(f_k = (1-\Delta t)^k\)</span> is a diverging sequence. <br />
+In general, explicit schemes require small time steps to be stable, and hence many time steps may be required to reach convergence by such algorithms. <br />
+One alternative lies in the use of so-called <em><strong>implicit</strong></em> schemes. The simplest one is the counterpart to the forward-Euler method: the <em><strong>backwards-Euler</strong></em> method. <br />
+Instead of using the <em><strong>known</strong></em> value <span class="math notranslate nohighlight">\(f_k\)</span> as an estimate for <span class="math notranslate nohighlight">\(f(t)\)</span>, we can use the <em><strong>unknown</strong></em> value <span class="math notranslate nohighlight">\(f_{k+1}\)</span>. The equation to calculate <span class="math notranslate nohighlight">\(f_{k+1}\)</span> from <span class="math notranslate nohighlight">\(f_k\)</span> becomes:</p>
+<div class="math notranslate nohighlight">
+\[
+f_{k+1} = f_k - \Delta t f_{k+1},
+\]</div>
+<p>so that</p>
+<div class="math notranslate nohighlight">
+\[
+f_{k+1} = \frac{f_k}{1+\Delta t}.
+\]</div>
+<p>Trivial recursion yields a direct expression of <span class="math notranslate nohighlight">\(f_k\)</span> in this case:</p>
+<div class="math notranslate nohighlight">
+\[
+f_k = \frac{f_{k-1}}{1+\Delta t} = \dots = \frac{f_0}{(1+\Delta t)^k} = \frac{1}{(1+\Delta t)^k},
+\]</div>
+<p>which is stable for any time step <span class="math notranslate nohighlight">\(\Delta t &gt; 0\)</span>. <br />
+Let us implement the backwards-Euler method on this example:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">backwards_euler</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="p">[</span><span class="n">f_0</span><span class="p">]</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">t_max</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">t_max</span> <span class="o">/</span> <span class="n">dt</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">f_k</span> <span class="o">=</span> <span class="n">F</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f_k</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">dt</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">T</span><span class="p">,</span> <span class="n">F</span>
+
+
+<span class="c1"># Numerical solution for dt = 3, 2, 1 and 0.1</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">backwards_euler</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta t=3$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">backwards_euler</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta t=2$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">backwards_euler</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta t=1$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">backwards_euler</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta t=0.1$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="s2">&quot;r--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Analytical&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x10775d950&gt;
+</pre></div>
+</div>
+<img alt="../_images/81cbc387bddc0187ed337a7484b7f85c24ebb1f3f1fbb2166f13d62d31dc9e4a.png" src="../_images/81cbc387bddc0187ed337a7484b7f85c24ebb1f3f1fbb2166f13d62d31dc9e4a.png" />
+</div>
+</div>
+<p>As we can see, the algorithm is very stable even for bigger time steps. In this simple example, the backwards-Euler iteration can be calculated directly as the differential equation is linear. However, in the general case, <span class="math notranslate nohighlight">\(f_{k+1}\)</span> may not be calculated directly from <span class="math notranslate nohighlight">\(f_k\)</span>, whereas direct calculation is always possible in the forward-Euler method.<br />
+Consider the following Cauchy problem:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left\{
+\begin{align}
+\frac{\mathrm{d}f}{\mathrm{d}t}&amp;=f(t)\cos(f(t)), \\
+f(0)&amp;=1.\\
+\end{align}
+\right.
+\end{split}\]</div>
+<p>With the forward-Euler method, the update is still direct: <span class="math notranslate nohighlight">\(f_{k+1} = f_k + \Delta t f_k\cos(f_k)\)</span>. However, the backwards-Euler method has the following update:</p>
+<div class="math notranslate nohighlight">
+\[
+f_{k+1} = f_k + \Delta t f_{k+1}\cos(f_{k+1}) \ \rightarrow \ f_{k+1}(1-\Delta t\cos(f_{k+1})) = f_k,
+\]</div>
+<p>which is a nonlinear equation of unknown <span class="math notranslate nohighlight">\(f_{k+1}\)</span>. Updating the backwards-Euler method thus requires solving a nonlinear equation, which is evidently way more computationally expensive than the forward-Euler update. However, we gain the stability of the backwards-Euler method. Let us compare the two.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f_0</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">t_max</span> <span class="o">=</span> <span class="mi">10</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">forward_euler</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="p">[</span><span class="n">f_0</span><span class="p">]</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">t_max</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">t_max</span> <span class="o">/</span> <span class="n">dt</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">f_k</span> <span class="o">=</span> <span class="n">F</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f_k</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">f_k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">f_k</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">T</span><span class="p">,</span> <span class="n">F</span>
+
+
+<span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">forward_euler</span><span class="p">(</span><span class="n">dt</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;FE $\Delta t = </span><span class="si">{}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dt</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x107981090&gt;
+</pre></div>
+</div>
+<img alt="../_images/fe96253d79c6521163dbfdb4e1ecf804f104568c7703a9837cbbfca6279694a8.png" src="../_images/fe96253d79c6521163dbfdb4e1ecf804f104568c7703a9837cbbfca6279694a8.png" />
+</div>
+</div>
+<p>For the backwards-Euler scheme, we need an implementation of the Newton method to use in the update. We will reuse the implementation from the previous notebooks.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">newton_method</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">derivative</span><span class="p">,</span> <span class="n">initial_guess</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">max_iteration</span><span class="o">=</span><span class="mi">40</span><span class="p">):</span>
+    <span class="n">x_n</span> <span class="o">=</span> <span class="n">initial_guess</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="nb">abs</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">x_n</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">tolerance</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&lt;</span> <span class="n">max_iteration</span><span class="p">:</span>
+        <span class="n">x_n</span> <span class="o">-=</span> <span class="n">function</span><span class="p">(</span><span class="n">x_n</span><span class="p">)</span> <span class="o">/</span> <span class="n">derivative</span><span class="p">(</span><span class="n">x_n</span><span class="p">)</span>
+        <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">x_n</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">tolerance</span><span class="p">:</span>  <span class="c1"># Not converged</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Did not converge after </span><span class="si">{}</span><span class="s2"> iterations.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">x_n</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">f_k</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">f</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="o">-</span> <span class="n">f_k</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">g_prime</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">+</span> <span class="n">f</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">backwards_euler</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="p">[</span><span class="n">f_0</span><span class="p">]</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">t_max</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">t_max</span> <span class="o">/</span> <span class="n">dt</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">f_k</span> <span class="o">=</span> <span class="n">F</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">newton_method</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">g</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">f_k</span><span class="p">,</span> <span class="n">dt</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">g_prime</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dt</span><span class="p">),</span> <span class="n">f_k</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">T</span><span class="p">,</span> <span class="n">F</span>
+
+
+<span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">backwards_euler</span><span class="p">(</span><span class="n">dt</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;BE $\Delta t = </span><span class="si">{}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dt</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x107910410&gt;
+</pre></div>
+</div>
+<img alt="../_images/927f96f3387781d3ed9e442aad80971fcf838f4100d061b2eda7f53ef95487a1.png" src="../_images/927f96f3387781d3ed9e442aad80971fcf838f4100d061b2eda7f53ef95487a1.png" />
+</div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./systems"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="3_SimpleNonlinearSystem.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Thermal pressurization in an undrained porous solid</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../numerical_ex.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Numerical implementation in poromechanics</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Maxime PIERRE
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

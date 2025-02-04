@@ -1,0 +1,835 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Introduction to Newton’s (Newton-Raphson) method &#8212; PoreNum</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'systems/1_Introduction';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Multivariate Newton method" href="2_MultivariateNewton.html" />
+    <link rel="prev" title="A short introduction on solving equation systems numerically for poromechanics" href="0_Warmup.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/PoreNum.png" class="logo__image only-light" alt="PoreNum - Home"/>
+    <img src="../_static/PoreNum.png" class="logo__image only-dark pst-js-only" alt="PoreNum - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to PoreNum: Poromechanics with Numerical implementations
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory.html">Theory of poromechanics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory/thermodynamics.html">Thermodynamics of porous continua</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/constitutive.html">Constitutive relationships of porous media</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../systems.html">Solving equation systems</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="0_Warmup.html">A short introduction on solving equation systems numerically for poromechanics</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Introduction to Newton’s (Newton-Raphson) method</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="2_MultivariateNewton.html">Multivariate Newton method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_SimpleNonlinearSystem.html">Thermal pressurization in an undrained porous solid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4_ImplicitSchemes.html">Numerical integration of differential equations : Explicit and implicit schemes</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../numerical_ex.html">Numerical implementation in poromechanics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_ex/5_HardeningPlasticity.html">A simple istropic hardening plasticity algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_ex/6_1D_Poroplasticity.html">Coupled plasticity example: Thermal softening of a poroplastic solid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_ex/7_VectorTensorNotations.html">Vector notations for tensors for easy implementation of tensor algebra</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fsystems/1_Introduction.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/systems/1_Introduction.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Introduction to Newton’s (Newton-Raphson) method</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Introduction to Newton’s (Newton-Raphson) method</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-sensitivity-to-initial-guess-and-non-convergence">Bonus: Sensitivity to initial guess and non-convergence</a></li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="introduction-to-newton-s-newton-raphson-method">
+<h1>Introduction to Newton’s (Newton-Raphson) method<a class="headerlink" href="#introduction-to-newton-s-newton-raphson-method" title="Link to this heading">#</a></h1>
+<p>Newton’s method is one of the most common methods for solving nonlinear equations numerically. <br />
+In this notebook, we will introduce the method and implement it to solve a simple one-dimensional example. <br />
+<br />
+For instance, let us consider the following nonlinear equation:</p>
+<div class="math notranslate nohighlight">
+\[ x\in\mathbb{R} : \cos(x)=x^3 \]</div>
+<p>Finding the solution to this equation amounts to finding the zero of the following function:</p>
+<div class="math notranslate nohighlight">
+\[ f : x \rightarrow \cos(x)-x^3 \]</div>
+<p>Let us plot this function first.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">3</span>
+
+
+<span class="c1"># Plot bounds</span>
+<span class="n">x_inf</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">x_sup</span> <span class="o">=</span> <span class="mf">1.2</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_inf</span><span class="p">,</span> <span class="n">x_sup</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">gc</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\cos(x)-x^3$&quot;</span><span class="p">)</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.lines.Line2D at 0x105793890&gt;
+</pre></div>
+</div>
+<img alt="../_images/edb03321c6f191f37f30014fab87e65ff1bb87d89094794b1b8b7b0855196201.png" src="../_images/edb03321c6f191f37f30014fab87e65ff1bb87d89094794b1b8b7b0855196201.png" />
+</div>
+</div>
+<p>As we can see, <span class="math notranslate nohighlight">\(f\)</span> has a zero for a value of <span class="math notranslate nohighlight">\(x\)</span> close to <span class="math notranslate nohighlight">\(0.9\)</span>, but we want to get a precise approximation of our solution. <br />
+The idea behind Newton’s method is to use the derivative of <span class="math notranslate nohighlight">\(f\)</span> to get a sequence of values <span class="math notranslate nohighlight">\(x_0, x_1, \dots, x_n\)</span> which converges towards the solution <span class="math notranslate nohighlight">\(\hat{x}\)</span> such that <span class="math notranslate nohighlight">\(f(\hat{x})=0\)</span>. <br />
+<span class="math notranslate nohighlight">\(f\)</span> is easily derivable and we have:</p>
+<div class="math notranslate nohighlight">
+\[ f': x \rightarrow -\sin(x)-3x^2. \]</div>
+<p>We have to start with an initial guess of the solution: let us say <span class="math notranslate nohighlight">\(x_0=0.5\)</span>. We will draw the tangent line to the graph of <span class="math notranslate nohighlight">\(f\)</span> at <span class="math notranslate nohighlight">\(f(x_0)\)</span>, which has equation:</p>
+<div class="math notranslate nohighlight">
+\[ t_0 : x \rightarrow f(x_0) + f'(x_0)(x-x_0). \]</div>
+<p>This tangent line intersects with the <span class="math notranslate nohighlight">\(x\)</span>-axis at <span class="math notranslate nohighlight">\(x_1\)</span>, such that:</p>
+<div class="math notranslate nohighlight">
+\[ f(x_0) + f'(x_0)(x_1-x_0) = 0, \]</div>
+<p>which gives us:</p>
+<div class="math notranslate nohighlight">
+\[ x_1 = x_0 - \frac{f(x_0)}{f'(x_0)} \]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_0</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">f_prime</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+
+
+<span class="n">x_1</span> <span class="o">=</span> <span class="n">x_0</span> <span class="o">-</span> <span class="n">f</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span> <span class="o">/</span> <span class="n">f_prime</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span>
+
+<span class="n">gc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">x_inf</span><span class="p">,</span> <span class="n">x_sup</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span> <span class="o">+</span> <span class="n">f_prime</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x_inf</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">),</span> <span class="n">f</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span> <span class="o">+</span> <span class="n">f_prime</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x_sup</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)],</span>
+    <span class="s2">&quot;k--&quot;</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># t_0 tangent</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">x_0</span><span class="p">,</span> <span class="n">x_1</span><span class="p">],</span> <span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="n">x_0</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x_0</span><span class="p">,</span> <span class="n">x_0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">x_0</span><span class="p">)],</span> <span class="s2">&quot;r--&quot;</span><span class="p">)</span>  <span class="c1"># x_0 projection</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$x_0$&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">x_0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">),</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$x_1$&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">x_1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Value of x_1:&quot;</span><span class="p">,</span> <span class="n">x_1</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">fig</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Value of x_1: 1.1121416370972725 
+</pre></div>
+</div>
+<img alt="../_images/8c5ca87584a2b528419206274f02b3b2a3536966aaa5a3fb7ab2151051215842.png" src="../_images/8c5ca87584a2b528419206274f02b3b2a3536966aaa5a3fb7ab2151051215842.png" />
+</div>
+</div>
+<p>The first iteration gives us a new point <span class="math notranslate nohighlight">\(x_1\)</span> closer to <span class="math notranslate nohighlight">\(\hat{x}\)</span>. The idea now is to iterate to get closer and closer to the solution. <br />
+The next value <span class="math notranslate nohighlight">\(x_2\)</span> is determined from <span class="math notranslate nohighlight">\(x_1\)</span> in the same way <span class="math notranslate nohighlight">\(x_1\)</span> is determined from <span class="math notranslate nohighlight">\(x_0\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[ x_2 = x_1 - \frac{f(x_1)}{f'(x_1)}. \]</div>
+<p>Let us draw the new tangent <span class="math notranslate nohighlight">\(t_1\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_2</span> <span class="o">=</span> <span class="n">x_1</span> <span class="o">-</span> <span class="n">f</span><span class="p">(</span><span class="n">x_1</span><span class="p">)</span> <span class="o">/</span> <span class="n">f_prime</span><span class="p">(</span><span class="n">x_1</span><span class="p">)</span>
+
+<span class="n">gc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">x_inf</span><span class="p">,</span> <span class="n">x_sup</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span> <span class="o">+</span> <span class="n">f_prime</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x_inf</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">),</span> <span class="n">f</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span> <span class="o">+</span> <span class="n">f_prime</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x_sup</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)],</span>
+    <span class="s2">&quot;y--&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">x_inf</span><span class="p">,</span> <span class="n">x_sup</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="n">x_1</span><span class="p">)</span> <span class="o">+</span> <span class="n">f_prime</span><span class="p">(</span><span class="n">x_1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x_inf</span> <span class="o">-</span> <span class="n">x_1</span><span class="p">),</span> <span class="n">f</span><span class="p">(</span><span class="n">x_1</span><span class="p">)</span> <span class="o">+</span> <span class="n">f_prime</span><span class="p">(</span><span class="n">x_1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x_sup</span> <span class="o">-</span> <span class="n">x_1</span><span class="p">)],</span>
+    <span class="s2">&quot;k--&quot;</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># t_1 tangent</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">x_1</span><span class="p">,</span> <span class="n">x_2</span><span class="p">],</span> <span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="n">x_1</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x_1</span><span class="p">,</span> <span class="n">x_1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">x_1</span><span class="p">)],</span> <span class="s2">&quot;r--&quot;</span><span class="p">)</span>  <span class="c1"># x_1 projection</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$x_2$&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">x_2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="n">gc</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Value of x_2:&quot;</span><span class="p">,</span> <span class="n">x_2</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">fig</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Value of x_2: 0.9096726937368068 
+</pre></div>
+</div>
+<img alt="../_images/dd209bc28d0985308f5e1a16ed67006eb0c1c3d34fdcb787d774f98a7194ebff.png" src="../_images/dd209bc28d0985308f5e1a16ed67006eb0c1c3d34fdcb787d774f98a7194ebff.png" />
+</div>
+</div>
+<p>We are closing in on the solution. Now, we will automatically iterate until we reach a certain precision. <br />
+Given a current value <span class="math notranslate nohighlight">\(x_n\)</span>, <span class="math notranslate nohighlight">\(x_{n+1}\)</span> is still determined in the same way:</p>
+<div class="math notranslate nohighlight">
+\[ x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}. \]</div>
+<p>We also need a stopping condition. With <span class="math notranslate nohighlight">\(\varepsilon &gt; 0\)</span> an arbitrary precision, we will iterate <strong>while</strong> <span class="math notranslate nohighlight">\(\lvert f(x_n) \rvert &gt; \varepsilon\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-12</span>  <span class="c1"># Precision</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">NewtonMethod</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">derivative</span><span class="p">,</span> <span class="n">initial_guess</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">max_iteration</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="n">x_n</span> <span class="o">=</span> <span class="n">initial_guess</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">initial_guess</span><span class="p">]</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x_n</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">eps</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&lt;</span> <span class="n">max_iteration</span><span class="p">:</span>
+        <span class="n">x_n</span> <span class="o">-=</span> <span class="n">function</span><span class="p">(</span><span class="n">x_n</span><span class="p">)</span> <span class="o">/</span> <span class="n">derivative</span><span class="p">(</span><span class="n">x_n</span><span class="p">)</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_n</span><span class="p">)</span>
+        <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;Iteration </span><span class="si">{}</span><span class="s2">: x_</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{}</span><span class="s2">, f(x_</span><span class="si">{}</span><span class="s2">) = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">iteration</span><span class="p">,</span> <span class="n">iteration</span><span class="p">,</span> <span class="n">x_n</span><span class="p">,</span> <span class="n">iteration</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x_n</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x_n</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">eps</span><span class="p">:</span>  <span class="c1"># Not converged</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Did not converge after </span><span class="si">{}</span><span class="s2"> iterations.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Converged</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converged in </span><span class="si">{}</span><span class="s2"> iterations.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">NewtonMethod</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">f_prime</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 1: x_1 = 1.1121416370972725, f(x_1) = -0.9328201795040985
+Iteration 2: x_2 = 0.9096726937368068, f(x_2) = -0.13875403935061048
+Iteration 3: x_3 = 0.8672638182088165, f(x_3) = -0.005393998041341219
+Iteration 4: x_4 = 0.8654771352982646, f(x_4) = -9.333106352094056e-06
+Iteration 5: x_5 = 0.8654740331109566, f(x_5) = -2.8106184046805538e-11
+Iteration 6: x_6 = 0.8654740331016144, f(x_6) = 1.1102230246251565e-16
+Converged in 6 iterations.
+</pre></div>
+</div>
+</div>
+</div>
+<p>You can now try the algorithm on other functions if you’d like!</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="bonus-sensitivity-to-initial-guess-and-non-convergence">
+<h1>Bonus: Sensitivity to initial guess and non-convergence<a class="headerlink" href="#bonus-sensitivity-to-initial-guess-and-non-convergence" title="Link to this heading">#</a></h1>
+<p>Newton’s method is not guaranteed to always converge towards the solution (which is why we introduced a maximum number of iterations in our <code class="docutils literal notranslate"><span class="pre">NewtonMethod</span></code> function!). In particular, the choice of the initial guess <span class="math notranslate nohighlight">\(x_0\)</span> can have a huge influence on the algorithm if the function is not regular enough. <br />
+Let us illustrate that with an example. Consider the following function:</p>
+<div class="math notranslate nohighlight">
+\[ f : x \rightarrow x^3-2x+2. \]</div>
+<p>Let us apply Newton’s method with an initial guess of -1.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">f_prime</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span>
+
+
+<span class="n">x_0</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-12</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$x^3-2x+2$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">NewtonMethod</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">f_prime</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/6d9d45d118769232ef62b68600da2c037062132a4eab74d2fcaaa012e4a26dea.png" src="../_images/6d9d45d118769232ef62b68600da2c037062132a4eab74d2fcaaa012e4a26dea.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 1: x_1 = -4.0, f(x_1) = -54.0
+Iteration 2: x_2 = -2.8260869565217392, f(x_2) = -14.919125503410868
+Iteration 3: x_3 = -2.1467190137392356, f(x_3) = -3.5995072936479247
+Iteration 4: x_4 = -1.8423262771400926, f(x_4) = -0.5685088618057428
+Iteration 5: x_5 = -1.7728476364392378, f(x_5) = -0.02634488978133742
+Iteration 6: x_6 = -1.7693013974364495, f(x_6) = -6.68403939361184e-05
+Iteration 7: x_7 = -1.7692923542973595, f(x_7) = -4.340705572758452e-10
+Iteration 8: x_8 = -1.7692923542386314, f(x_8) = 0.0
+Converged in 8 iterations.
+</pre></div>
+</div>
+</div>
+</div>
+<p>The convergence is easy. Let us now try with an initial guess of 0.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_0</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">NewtonMethod</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">f_prime</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 1: x_1 = 1.0, f(x_1) = 1.0
+Iteration 2: x_2 = 0.0, f(x_2) = 2.0
+Iteration 3: x_3 = 1.0, f(x_3) = 1.0
+Iteration 4: x_4 = 0.0, f(x_4) = 2.0
+Iteration 5: x_5 = 1.0, f(x_5) = 1.0
+Iteration 6: x_6 = 0.0, f(x_6) = 2.0
+Iteration 7: x_7 = 1.0, f(x_7) = 1.0
+Iteration 8: x_8 = 0.0, f(x_8) = 2.0
+Iteration 9: x_9 = 1.0, f(x_9) = 1.0
+Iteration 10: x_10 = 0.0, f(x_10) = 2.0
+Iteration 11: x_11 = 1.0, f(x_11) = 1.0
+Iteration 12: x_12 = 0.0, f(x_12) = 2.0
+Iteration 13: x_13 = 1.0, f(x_13) = 1.0
+Iteration 14: x_14 = 0.0, f(x_14) = 2.0
+Iteration 15: x_15 = 1.0, f(x_15) = 1.0
+Iteration 16: x_16 = 0.0, f(x_16) = 2.0
+Iteration 17: x_17 = 1.0, f(x_17) = 1.0
+Iteration 18: x_18 = 0.0, f(x_18) = 2.0
+Iteration 19: x_19 = 1.0, f(x_19) = 1.0
+Iteration 20: x_20 = 0.0, f(x_20) = 2.0
+Did not converge after 20 iterations.
+</pre></div>
+</div>
+</div>
+</div>
+<p>The method oscillates between 0 and 1, and is unable to find the zero of the function. Other guesses will lead to convergence at the cost of a significantly higher number of iterations. <br />
+Let us try <span class="math notranslate nohighlight">\(x_0 = 0.7\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_0</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">NewtonMethod</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">f_prime</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">max_iteration</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 1: x_1 = 2.479245283018867, f(x_1) = 12.280580237377151
+Iteration 2: x_2 = 1.7322500572453823, f(x_2) = 3.7334457616018266
+Iteration 3: x_3 = 1.199058394724146, f(x_3) = 1.325818666758956
+Iteration 4: x_4 = 0.625910622819175, f(x_4) = 0.9933880710465879
+Iteration 5: x_5 = 1.8304441794726358, f(x_5) = 4.47206226220186
+Iteration 6: x_6 = 1.2750173502781303, f(x_6) = 1.5227217907328496
+Iteration 7: x_7 = 0.7457446011736587, f(x_7) = 0.9232454790178213
+Iteration 8: x_8 = 3.5300011914303626, f(x_8) = 38.92701915603813
+Iteration 9: x_9 = 2.429831012393871, f(x_9) = 11.48625161864029
+Iteration 10: x_10 = 1.6987923850125064, f(x_10) = 3.504952643775497
+Iteration 11: x_11 = 1.1723403603694047, f(x_11) = 1.2665626752852215
+Iteration 12: x_12 = 0.5757903268479158, f(x_12) = 1.0393137047036043
+Iteration 13: x_13 = 1.6095254813150826, f(x_13) = 2.9505411251748193
+Iteration 14: x_14 = 1.0983186403296168, f(x_14) = 1.1282687079862475
+Iteration 15: x_15 = 0.4013882009279238, f(x_15) = 1.2618922497869398
+Iteration 16: x_16 = 1.2334073346806564, f(x_16) = 1.4095600807530184
+Iteration 17: x_17 = 0.6836313884135212, f(x_17) = 0.9522336345101392
+Iteration 18: x_18 = 2.2761434604290107, f(x_18) = 9.240023246485213
+Iteration 19: x_19 = 1.5938446227695904, f(x_19) = 2.861219089722697
+Iteration 20: x_20 = 1.0848234755434996, f(x_20) = 1.1070188483262655
+Iteration 21: x_21 = 0.361530367999351, f(x_21) = 1.3241928040519182
+Iteration 22: x_22 = 1.1850910360607312, f(x_22) = 1.294208087678724
+Iteration 23: x_23 = 0.6003555491447349, f(x_23) = 1.0156731223791406
+Iteration 24: x_24 = 1.7058866316643484, f(x_24) = 3.552440764592303
+Iteration 25: x_25 = 1.178046682887001, f(x_25) = 1.278792737213813
+Iteration 26: x_26 = 0.586938519761515, f(x_26) = 1.0283214175801165
+Iteration 27: x_27 = 1.6508922564902084, f(x_27) = 3.1976319334158445
+Iteration 28: x_28 = 1.1331691153861119, f(x_28) = 1.1887327781267076
+Iteration 29: x_29 = 0.49137987038880016, f(x_29) = 1.13588598143295
+Iteration 30: x_30 = 1.3818256350351423, f(x_30) = 1.8748647524824142
+Iteration 31: x_31 = 0.8789552789330879, f(x_31) = 0.9211372264180855
+Iteration 32: x_32 = -2.0205552453260287, f(x_32) = -2.2080962468861802
+Iteration 33: x_33 = -1.8050877177833087, f(x_33) = -0.27141709129217784
+Iteration 34: x_34 = -1.7701788794118423, f(x_34) = -0.00655664501867248
+Iteration 35: x_35 = -1.769292918111409, f(x_35) = -4.16769043853904e-06
+Iteration 36: x_36 = -1.7692923542388597, f(x_36) = -1.6866508190105378e-12
+Iteration 37: x_37 = -1.7692923542386314, f(x_37) = 0.0
+Converged in 37 iterations.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./systems"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="0_Warmup.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">A short introduction on solving equation systems numerically for poromechanics</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="2_MultivariateNewton.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Multivariate Newton method</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Introduction to Newton’s (Newton-Raphson) method</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-sensitivity-to-initial-guess-and-non-convergence">Bonus: Sensitivity to initial guess and non-convergence</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Maxime PIERRE
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

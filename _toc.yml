@@ -4,7 +4,26 @@
 format: jb-book
 root: intro
 chapters:
-  - file: markdown
-  - file: notebooks
-  - file: markdown-notebooks
-  - file: mymarkdownfile
+  - file: introduction
+  - file: theory
+    sections:
+      - file: theory/thermodynamics
+      - file: theory/constitutive
+  - file: systems
+    sections:
+      - file: systems/0_Warmup
+      - file: systems/1_Introduction
+      - file: systems/2_MultivariateNewton
+      - file: systems/3_SimpleNonlinearSystem
+      - file: systems/4_ImplicitSchemes
+  - file: numerical_ex
+    sections:
+      - file: numerical_ex/5_HardeningPlasticity
+      - file: numerical_ex/6_1D_Poroplasticity
+      - file: numerical_ex/7_VectorTensorNotations
+      # - file: numerical_ex/8_3D_Plasticity
+
+  # - file: markdown
+  # - file: notebooks
+  # - file: markdown-notebooks
+  # - file: mymarkdownfile
