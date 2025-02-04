@@ -1,0 +1,966 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>A short introduction on solving equation systems numerically for poromechanics &#8212; PoreNum</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'systems/0_Warmup';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Introduction to Newton’s (Newton-Raphson) method" href="1_Introduction.html" />
+    <link rel="prev" title="Solving equation systems" href="../systems.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/PoreNum.png" class="logo__image only-light" alt="PoreNum - Home"/>
+    <img src="../_static/PoreNum.png" class="logo__image only-dark pst-js-only" alt="PoreNum - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to PoreNum: Poromechanics with Numerical implementations
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory.html">Theory of poromechanics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory/thermodynamics.html">Thermodynamics of porous continua</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/constitutive.html">Constitutive relationships of porous media</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../systems.html">Solving equation systems</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">A short introduction on solving equation systems numerically for poromechanics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1_Introduction.html">Introduction to Newton’s (Newton-Raphson) method</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="2_MultivariateNewton.html">Multivariate Newton method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_SimpleNonlinearSystem.html">Thermal pressurization in an undrained porous solid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4_ImplicitSchemes.html">Numerical integration of differential equations : Explicit and implicit schemes</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../numerical_ex.html">Numerical implementation in poromechanics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_ex/5_HardeningPlasticity.html">A simple istropic hardening plasticity algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_ex/6_1D_Poroplasticity.html">Coupled plasticity example: Thermal softening of a poroplastic solid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_ex/7_VectorTensorNotations.html">Vector notations for tensors for easy implementation of tensor algebra</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fsystems/0_Warmup.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/systems/0_Warmup.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>A short introduction on solving equation systems numerically for poromechanics</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-a-bit-of-matrix-manipulation-gaussian-elimination-algorithm">Bonus: a bit of matrix manipulation: Gaussian elimination algorithm</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="a-short-introduction-on-solving-equation-systems-numerically-for-poromechanics">
+<h1>A short introduction on solving equation systems numerically for poromechanics<a class="headerlink" href="#a-short-introduction-on-solving-equation-systems-numerically-for-poromechanics" title="Link to this heading">#</a></h1>
+<p>This series of notebooks aims at giving theoretical background on basic methods for solving linear and especially nonlinear systems of equations, as well as examples of their implementation in <code class="docutils literal notranslate"><span class="pre">python</span></code> with examples in poromechanical constitutive modelling. <br />
+When implementing constitutive models, we are often faced with systems of equations that need to be solved, as many of the problems we are dealing with will be <strong>inverse problems</strong>. An inverse problem amounts to determining the causes to an observed outcome. <br />
+Given a behaviour <span class="math notranslate nohighlight">\(f:x \rightarrow f(x)\)</span> and an observed outcome <span class="math notranslate nohighlight">\(y\)</span>, we deal with the following problem:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Find} \ x \ \lvert \ f(x)=y.
+\]</div>
+<p>Let us take a very simple first example: consider a 1D bar element in linear elasticity. Its behaviour, linking the stress <span class="math notranslate nohighlight">\(\sigma\)</span> with the deformation <span class="math notranslate nohighlight">\(\varepsilon\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma = E(\varepsilon-\varepsilon_0) = f(\varepsilon),
+\]</div>
+<p>with <span class="math notranslate nohighlight">\(E\)</span> the Young modulus of the material. Then, if we want to calculate the deformation corresponding to a given stress state
+<span class="math notranslate nohighlight">\(\tilde{\sigma}\)</span>, we must solve the inverse problem:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Find} \ \varepsilon \ \lvert \ E(\varepsilon-\varepsilon_0) = \tilde{\sigma}.
+\]</div>
+<p>Of course, this is a trivial problem since the relationship is linear, and is then easily inversed:</p>
+<div class="math notranslate nohighlight">
+\[
+\varepsilon = \varepsilon_0 + \frac{\tilde{\sigma}}{E}.
+\]</div>
+<p>However, the task may not always be this simple. What if we considered nonlinear elasticity? In the case of simple laws such as power laws, we could still manage it easily, but what about more complex functions, for which the inverse is unknown? We need other numerical tools that we will introduce starting from the next notebook. <br />
+More often than not, we will also be dealing with multiple equations to be solved simultaneously: poromechanical problems are coupled. In order to illustrate this, let us take a simple isotropic porous solid with the usual state equations:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left\{
+\begin{array}{}
+\sigma = K\varepsilon -bp, \\
+\phi - \phi_0 = b\varepsilon + \frac{p}{N}.
+\end{array}
+\right.
+\end{split}\]</div>
+<p>If we consider a force-controlled, undrained isotropic compression with an incompressible fluid, we have for example:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left\{
+\begin{array}{}
+\sigma =-\tilde{\sigma}, \\
+\phi = \phi_0.
+\end{array}
+\right.
+\end{split}\]</div>
+<p>Finding the corresponding deformation and pressure requires solving the system:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left\{
+\begin{array}{}
+K\varepsilon -bp =-\tilde{\sigma}, \\
+b\varepsilon + \frac{p}{N} = 0.
+\end{array}
+\right.
+\end{split}\]</div>
+<p>We have two equations and two unknowns, which means we will find a unique solution unless our system is linked. Solving it seems easy enough: we can just express one unknown as a function of the other from the second equation, then inject it in the first, and voilà! That is indeed a decent way to approach that problem, and in fact close to the <em>Gauss-Seidel</em> algorithm which we will talk about in a minute. A useful representation of this problem consists in using matrices and vectors:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{bmatrix}
+K &amp; -b \\
+b &amp; \frac{1}{N}
+\end{bmatrix}
+\begin{bmatrix}
+\varepsilon \\
+p
+\end{bmatrix}=
+\begin{bmatrix}
+-\tilde{\sigma} \\
+0
+\end{bmatrix},
+\end{split}\]</div>
+<p>which is a problem of the usual form:</p>
+<div class="math notranslate nohighlight">
+\[
+K\cdot U = F
+\]</div>
+<p>of unknown <span class="math notranslate nohighlight">\(U\)</span>. We know an easy way of solving this problem: if we can calculate the inverse of <span class="math notranslate nohighlight">\(K\)</span>, we have:</p>
+<div class="math notranslate nohighlight">
+\[
+U = K^{-1}\cdot F.
+\]</div>
+<p>Let us take a simple example: <span class="math notranslate nohighlight">\(\tilde{\sigma}=1\)</span> MPa, <span class="math notranslate nohighlight">\(K=1\)</span> GPa, <span class="math notranslate nohighlight">\(b = 0.5\)</span> and <span class="math notranslate nohighlight">\(N = 1\)</span> GPa.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Solicitation</span>
+<span class="n">sig_tilde</span> <span class="o">=</span> <span class="mf">1e6</span>
+
+<span class="c1"># Material parameters</span>
+<span class="n">K</span> <span class="o">=</span> <span class="mf">1e9</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mf">1e9</span>
+
+<span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">K</span><span class="p">,</span> <span class="o">-</span><span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">N</span><span class="p">]])</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">sig_tilde</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now that everything is defined, let us calculate our unknowns:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculating the inverse of K</span>
+<span class="n">K_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="c1"># Getting U</span>
+<span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">K_inv</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The corresponding state is : epsilon = </span><span class="si">{:.4f}</span><span class="s2">, p = </span><span class="si">{}</span><span class="s2"> Pa.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">U</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The corresponding state is : epsilon = -0.0008, p = 400000.0 Pa.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Checking that KU=F</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result of K*U: sigma = </span><span class="si">{}</span><span class="s2"> Pa, phi - phi0 = </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">U</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Result of K*U: sigma = -1000000.0000000001 Pa, phi - phi0 = -5.421010862427522e-20.
+</pre></div>
+</div>
+</div>
+</div>
+<section id="bonus-a-bit-of-matrix-manipulation-gaussian-elimination-algorithm">
+<h2>Bonus: a bit of matrix manipulation: Gaussian elimination algorithm<a class="headerlink" href="#bonus-a-bit-of-matrix-manipulation-gaussian-elimination-algorithm" title="Link to this heading">#</a></h2>
+<p>As an exercise to familiarize ourself with basic matrix manipulations in <code class="docutils literal notranslate"><span class="pre">python</span></code>, we can try and implement a simple way of solving linear systems of equations, however large they are, without using a built-in matrix inversion function. <br />
+Gauss elimination consists of 3 basic operations:</p>
+<ul class="simple">
+<li><p>Swap two rows of the matrix,</p></li>
+<li><p>Multiply a row by a non-zero scalar,</p></li>
+<li><p>Add a multiple of one row to another row.</p></li>
+</ul>
+<p>Say we are trying to solve the following linear system:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left\{\begin{array}{cl}
+2x+y-z &amp;=8, \\
+4x+2y+2z &amp;=-11, \\
+-2x+y+2z &amp;= -3.
+\end{array}\right.
+\end{split}\]</div>
+<p>We can build the corresponding <em>augmented matrix</em>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[
+\begin{array}{ccc|c}
+2 &amp; 1 &amp; -1 &amp; 8 \\
+4 &amp; 2 &amp; 2 &amp; -11 \\
+-2 &amp; 1 &amp; 2 &amp; -3 \\
+\end{array}
+\right]
+\end{split}\]</div>
+<p>The goal is to reduce the left <span class="math notranslate nohighlight">\(3\times 3\)</span> part to identity to get the solution in the right part. We will first try to have a <span class="math notranslate nohighlight">\(1\)</span> and two <span class="math notranslate nohighlight">\(0\)</span> in the first column. <br />
+We will start by making a <span class="math notranslate nohighlight">\(1\)</span> in position <span class="math notranslate nohighlight">\((1,1)\)</span>: we thus multiply the first row by <span class="math notranslate nohighlight">\(1/2\)</span> (second operation):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[
+\begin{array}{ccc|c}
+\color{red}{1} &amp; \frac{1}{2} &amp; -\frac{1}{2} &amp; 4 \\
+4 &amp; 2 &amp; 2 &amp; -11 \\
+-2 &amp; 1 &amp; 2 &amp; -3 \\
+\end{array}
+\right]
+\end{split}\]</div>
+<p>Then, we eliminate the first column in rows 2 and 3 by adding 3 times and 2 times the first row, respectively:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[
+\begin{array}{ccc|c}
+\color{red}{1} &amp; \frac{1}{2} &amp; -\frac{1}{2} &amp; 4 \\
+\color{red}{0} &amp; 0 &amp; 4 &amp; -27 \\
+\color{red}{0} &amp; 2 &amp; 1 &amp; 5 \\
+\end{array}
+\right]
+\end{split}\]</div>
+<p>The next step is to get a <span class="math notranslate nohighlight">\(1\)</span> in position <span class="math notranslate nohighlight">\((2,2)\)</span>. However, we currently have <span class="math notranslate nohighlight">\(0\)</span> there, so there is no way we can multiply row <span class="math notranslate nohighlight">\(2\)</span> to get <span class="math notranslate nohighlight">\(1\)</span> in that position. <br />
+We will then swap it with the first row which has a non-zero value in the second column (here, row <span class="math notranslate nohighlight">\(3\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[
+\begin{array}{ccc|c}
+\color{red}{1} &amp; \frac{1}{2} &amp; -\frac{1}{2} &amp; 4 \\
+\color{red}{0} &amp; 2 &amp; 1 &amp; 5 \\
+\color{red}{0} &amp; 0 &amp; 4 &amp; -27 \\
+\end{array}
+\right]
+\end{split}\]</div>
+<p>Finally, we multiply the second row by <span class="math notranslate nohighlight">\(1/2\)</span>, eliminate the column <span class="math notranslate nohighlight">\(2\)</span> in the row above, then with row <span class="math notranslate nohighlight">\(3\)</span> again multiply by <span class="math notranslate nohighlight">\(1/4\)</span> and eliminate other values in column <span class="math notranslate nohighlight">\(3\)</span>. We end up with:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[
+\begin{array}{ccc|c}
+1 &amp; 0 &amp; 0 &amp; -\frac{37}{16} \\
+0 &amp; 1 &amp; 0 &amp; \frac{47}{8} \\
+0 &amp; 0 &amp; 1 &amp; -\frac{27}{4} \\
+\end{array}
+\right]
+\end{split}\]</div>
+<p>Let us implement the algorithm for any linear system:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">gauss_elimination</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="c1"># Here M is an &quot;augmented&quot; matrix, what matters is the number of rows</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="p">)</span>  <span class="c1"># Creating a copy of the original matrix, otherwise it will be modified by the function</span>
+    <span class="n">nb_rows</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_rows</span><span class="p">):</span>
+        <span class="c1"># Check if our pivot is 0</span>
+        <span class="k">if</span> <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># We need to swap rows</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="k">while</span> <span class="n">M</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="n">nb_rows</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># Swap rows i and j</span>
+            <span class="n">aux_row</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">M</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">aux_row</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Swapped rows </span><span class="si">{}</span><span class="s2"> and </span><span class="si">{}</span><span class="s2">:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+        <span class="c1"># Now our pivot is non-zero</span>
+        <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reduced pivot in row </span><span class="si">{}</span><span class="s2"> to 1:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_rows</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">M</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">M</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Eliminated other values in column </span><span class="si">{}</span><span class="s2">:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">M</span>
+
+
+<span class="c1"># Defining our matrices</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">11</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">K</span><span class="p">,</span> <span class="n">F</span><span class="p">))</span>
+
+<span class="c1"># Checking the algorithm against matrix inversion</span>
+<span class="n">M</span> <span class="o">=</span> <span class="n">gauss_elimination</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Solution from Gauss elimination: X=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">M</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">K</span><span class="p">),</span> <span class="n">F</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+    <span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Actual solution: X=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sol</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;You succeeded!&quot;</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">M</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">sol</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;Check your algorithm!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Reduced pivot in row 0 to 1:
+[[  1.    0.5  -0.5   4. ]
+ [  4.    2.    2.  -11. ]
+ [ -2.    1.    2.    3. ]]
+Eliminated other values in column 0:
+[[  1.    0.5  -0.5   4. ]
+ [  0.    0.    4.  -27. ]
+ [  0.    2.    1.   11. ]]
+Swapped rows 1 and 2:
+[[  1.    0.5  -0.5   4. ]
+ [  0.    2.    1.   11. ]
+ [  0.    0.    4.  -27. ]]
+Reduced pivot in row 1 to 1:
+[[  1.    0.5  -0.5   4. ]
+ [  0.    1.    0.5   5.5]
+ [  0.    0.    4.  -27. ]]
+Eliminated other values in column 1:
+[[  1.     0.    -0.75   1.25]
+ [  0.     1.     0.5    5.5 ]
+ [  0.     0.     4.   -27.  ]]
+Reduced pivot in row 2 to 1:
+[[ 1.    0.   -0.75  1.25]
+ [ 0.    1.    0.5   5.5 ]
+ [ 0.    0.    1.   -6.75]]
+Eliminated other values in column 2:
+[[ 1.      0.      0.     -3.8125]
+ [ 0.      1.      0.      8.875 ]
+ [ 0.      0.      1.     -6.75  ]]
+Solution from Gauss elimination: X=[-3.8125  8.875  -6.75  ]
+Actual solution: X=[-3.8125  8.875  -6.75  ]
+You succeeded!
+</pre></div>
+</div>
+</div>
+</div>
+<p>Gauss elimination can also be used to invert a matrix: just use the previous, but instead of putting the <span class="math notranslate nohighlight">\(F\)</span> vector on the right, put the identity matrix. Then, the right matrix will become the inverse of the initially left matrix:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[\begin{array}{c|c}
+M &amp; I\\
+\end{array}\right]
+\rightarrow
+\left[\begin{array}{c|c}
+I &amp; M^{-1}\\
+\end{array}\right]
+\end{split}\]</div>
+<p>Can you inverse the following matrix <span class="math notranslate nohighlight">\(M\)</span>?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Make Identity Matrix</span>
+<span class="n">I</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">I</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">M_inv</span> <span class="o">=</span> <span class="n">gauss_elimination</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">I</span><span class="p">)))[:,</span> <span class="mi">5</span><span class="p">:]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Checking M^-1.M: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M_inv</span><span class="p">,</span> <span class="n">M</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Reduced pivot in row 0 to 1:
+[[1.   0.   0.5  0.5  0.75 0.25 0.   0.   0.   0.  ]
+ [9.   3.   2.   0.   2.   0.   1.   0.   0.   0.  ]
+ [0.   9.   1.   9.   7.   0.   0.   1.   0.   0.  ]
+ [1.   1.   9.   4.   8.   0.   0.   0.   1.   0.  ]
+ [7.   8.   9.   3.   3.   0.   0.   0.   0.   1.  ]]
+Eliminated other values in column 0:
+[[ 1.    0.    0.5   0.5   0.75  0.25  0.    0.    0.    0.  ]
+ [ 0.    3.   -2.5  -4.5  -4.75 -2.25  1.    0.    0.    0.  ]
+ [ 0.    9.    1.    9.    7.    0.    0.    1.    0.    0.  ]
+ [ 0.    1.    8.5   3.5   7.25 -0.25  0.    0.    1.    0.  ]
+ [ 0.    8.    5.5  -0.5  -2.25 -1.75  0.    0.    0.    1.  ]]
+Reduced pivot in row 1 to 1:
+[[ 1.          0.          0.5         0.5         0.75        0.25
+   0.          0.          0.          0.        ]
+ [ 0.          1.         -0.83333333 -1.5        -1.58333333 -0.75
+   0.33333333  0.          0.          0.        ]
+ [ 0.          9.          1.          9.          7.          0.
+   0.          1.          0.          0.        ]
+ [ 0.          1.          8.5         3.5         7.25       -0.25
+   0.          0.          1.          0.        ]
+ [ 0.          8.          5.5        -0.5        -2.25       -1.75
+   0.          0.          0.          1.        ]]
+Eliminated other values in column 1:
+[[ 1.          0.          0.5         0.5         0.75        0.25
+   0.          0.          0.          0.        ]
+ [ 0.          1.         -0.83333333 -1.5        -1.58333333 -0.75
+   0.33333333  0.          0.          0.        ]
+ [ 0.          0.          8.5        22.5        21.25        6.75
+  -3.          1.          0.          0.        ]
+ [ 0.          0.          9.33333333  5.          8.83333333  0.5
+  -0.33333333  0.          1.          0.        ]
+ [ 0.          0.         12.16666667 11.5        10.41666667  4.25
+  -2.66666667  0.          0.          1.        ]]
+Reduced pivot in row 2 to 1:
+[[ 1.          0.          0.5         0.5         0.75        0.25
+   0.          0.          0.          0.        ]
+ [ 0.          1.         -0.83333333 -1.5        -1.58333333 -0.75
+   0.33333333  0.          0.          0.        ]
+ [ 0.          0.          1.          2.64705882  2.5         0.79411765
+  -0.35294118  0.11764706  0.          0.        ]
+ [ 0.          0.          9.33333333  5.          8.83333333  0.5
+  -0.33333333  0.          1.          0.        ]
+ [ 0.          0.         12.16666667 11.5        10.41666667  4.25
+  -2.66666667  0.          0.          1.        ]]
+Eliminated other values in column 2:
+[[  1.           0.           0.          -0.82352941  -0.5
+   -0.14705882   0.17647059  -0.05882353   0.           0.        ]
+ [  0.           1.           0.           0.70588235   0.5
+   -0.08823529   0.03921569   0.09803922   0.           0.        ]
+ [  0.           0.           1.           2.64705882   2.5
+    0.79411765  -0.35294118   0.11764706   0.           0.        ]
+ [  0.           0.           0.         -19.70588235 -14.5
+   -6.91176471   2.96078431  -1.09803922   1.           0.        ]
+ [  0.           0.           0.         -20.70588235 -20.
+   -5.41176471   1.62745098  -1.43137255   0.           1.        ]]
+Reduced pivot in row 3 to 1:
+[[  1.           0.           0.          -0.82352941  -0.5
+   -0.14705882   0.17647059  -0.05882353   0.           0.        ]
+ [  0.           1.           0.           0.70588235   0.5
+   -0.08823529   0.03921569   0.09803922   0.           0.        ]
+ [  0.           0.           1.           2.64705882   2.5
+    0.79411765  -0.35294118   0.11764706   0.           0.        ]
+ [ -0.          -0.          -0.           1.           0.7358209
+    0.35074627  -0.15024876   0.05572139  -0.05074627  -0.        ]
+ [  0.           0.           0.         -20.70588235 -20.
+   -5.41176471   1.62745098  -1.43137255   0.           1.        ]]
+Eliminated other values in column 3:
+[[ 1.          0.          0.          0.          0.10597015  0.14179104
+   0.05273632 -0.01293532 -0.04179104  0.        ]
+ [ 0.          1.          0.          0.         -0.01940299 -0.3358209
+   0.14527363  0.05870647  0.0358209   0.        ]
+ [ 0.          0.          1.          0.          0.55223881 -0.13432836
+   0.04477612 -0.02985075  0.13432836  0.        ]
+ [-0.         -0.         -0.          1.          0.7358209   0.35074627
+  -0.15024876  0.05572139 -0.05074627 -0.        ]
+ [ 0.          0.          0.          0.         -4.7641791   1.85074627
+  -1.48358209 -0.27761194 -1.05074627  1.        ]]
+Reduced pivot in row 4 to 1:
+[[ 1.          0.          0.          0.          0.10597015  0.14179104
+   0.05273632 -0.01293532 -0.04179104  0.        ]
+ [ 0.          1.          0.          0.         -0.01940299 -0.3358209
+   0.14527363  0.05870647  0.0358209   0.        ]
+ [ 0.          0.          1.          0.          0.55223881 -0.13432836
+   0.04477612 -0.02985075  0.13432836  0.        ]
+ [-0.         -0.         -0.          1.          0.7358209   0.35074627
+  -0.15024876  0.05572139 -0.05074627 -0.        ]
+ [-0.         -0.         -0.         -0.          1.         -0.38847118
+   0.31140351  0.05827068  0.22055138 -0.20989975]]
+Eliminated other values in column 4:
+[[ 1.          0.          0.          0.          0.          0.18295739
+   0.01973684 -0.01911028 -0.06516291  0.02224311]
+ [ 0.          1.          0.          0.          0.         -0.3433584
+   0.15131579  0.05983709  0.04010025 -0.00407268]
+ [ 0.          0.          1.          0.          0.          0.0802005
+  -0.12719298 -0.06203008  0.01253133  0.11591479]
+ [ 0.          0.          0.          1.          0.          0.63659148
+  -0.37938596  0.01284461 -0.21303258  0.15444862]
+ [-0.         -0.         -0.         -0.          1.         -0.38847118
+   0.31140351  0.05827068  0.22055138 -0.20989975]]
+Checking M^-1.M: [[ 1.00000000e+00  1.94289029e-16  2.77555756e-16  2.49800181e-16
+   3.88578059e-16]
+ [-6.27102537e-16  1.00000000e+00 -2.19442520e-16 -2.48932819e-16
+  -4.98732999e-16]
+ [ 1.38777878e-16  3.33066907e-16  1.00000000e+00  5.82867088e-16
+   7.49400542e-16]
+ [ 1.77635684e-15  1.11022302e-15  4.44089210e-16  1.00000000e+00
+   1.11022302e-15]
+ [-2.22044605e-15 -8.88178420e-16 -4.44089210e-16 -1.22124533e-15
+   1.00000000e+00]]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./systems"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../systems.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Solving equation systems</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="1_Introduction.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Introduction to Newton’s (Newton-Raphson) method</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-a-bit-of-matrix-manipulation-gaussian-elimination-algorithm">Bonus: a bit of matrix manipulation: Gaussian elimination algorithm</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Maxime PIERRE
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,686 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Vector notations for tensors for easy implementation of tensor algebra &#8212; PoreNum</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'numerical_ex/7_VectorTensorNotations';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Coupled plasticity example: Thermal softening of a poroplastic solid" href="6_1D_Poroplasticity.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/PoreNum.png" class="logo__image only-light" alt="PoreNum - Home"/>
+    <img src="../_static/PoreNum.png" class="logo__image only-dark pst-js-only" alt="PoreNum - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to PoreNum: Poromechanics with Numerical implementations
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory.html">Theory of poromechanics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory/thermodynamics.html">Thermodynamics of porous continua</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/constitutive.html">Constitutive relationships of porous media</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../systems.html">Solving equation systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../systems/0_Warmup.html">A short introduction on solving equation systems numerically for poromechanics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../systems/1_Introduction.html">Introduction to Newton’s (Newton-Raphson) method</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../systems/2_MultivariateNewton.html">Multivariate Newton method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../systems/3_SimpleNonlinearSystem.html">Thermal pressurization in an undrained porous solid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../systems/4_ImplicitSchemes.html">Numerical integration of differential equations : Explicit and implicit schemes</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../numerical_ex.html">Numerical implementation in poromechanics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="5_HardeningPlasticity.html">A simple istropic hardening plasticity algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6_1D_Poroplasticity.html">Coupled plasticity example: Thermal softening of a poroplastic solid</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Vector notations for tensors for easy implementation of tensor algebra</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fnumerical_ex/7_VectorTensorNotations.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/numerical_ex/7_VectorTensorNotations.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Vector notations for tensors for easy implementation of tensor algebra</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#voigt-notation-for-symmetric-tensors">Voigt notation for symmetric tensors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mandel-notation">Mandel notation</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="vector-notations-for-tensors-for-easy-implementation-of-tensor-algebra">
+<h1>Vector notations for tensors for easy implementation of tensor algebra<a class="headerlink" href="#vector-notations-for-tensors-for-easy-implementation-of-tensor-algebra" title="Link to this heading">#</a></h1>
+<section id="voigt-notation-for-symmetric-tensors">
+<h2>Voigt notation for symmetric tensors<a class="headerlink" href="#voigt-notation-for-symmetric-tensors" title="Link to this heading">#</a></h2>
+<p>In 3D, a symmetric tensor <span class="math notranslate nohighlight">\(\bf T\)</span> (for which <span class="math notranslate nohighlight">\(T_{ij}=T_{ji}\)</span>) has 6 distinct components:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+{\bf T}=
+\begin{bmatrix}
+T_{11} &amp; T_{12} &amp; T_{13} \\
+\vdots &amp; T_{22} &amp; T_{23} \\
+\text{sym} &amp; \cdots &amp; T_{33}
+\end{bmatrix}.
+\end{split}\]</div>
+<p>It can thus be represented with a 6-component vector <span class="math notranslate nohighlight">\(\bf\tilde{T}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+{\bf \tilde{T}} = 
+\begin{bmatrix}
+T_{11} &amp; T_{22} &amp; T_{33} &amp; T_{23} &amp; T_{13} &amp; T_{12}
+\end{bmatrix},
+\]</div>
+<p>which amounts to going down the diagonal of the tensor and then up then left.</p>
+</section>
+<section id="mandel-notation">
+<h2>Mandel notation<a class="headerlink" href="#mandel-notation" title="Link to this heading">#</a></h2>
+<p>Voigt notation is interesting, however it does not transfer the contraction properties (i.e. <span class="math notranslate nohighlight">\({\bf T}:{\bf T} \neq {\bf\tilde{T}}\cdot{\bf\tilde{T}}\)</span>). <br />
+Mandel’s notation, however transfers this property. The vector representation is:</p>
+<div class="math notranslate nohighlight">
+\[
+{\bf \tilde{T}} = 
+\begin{bmatrix}
+T_{11} &amp; T_{22} &amp; T_{33} &amp; \sqrt{2}\ T_{23} &amp; \sqrt{2}\ T_{13} &amp; \sqrt{2}\ T_{12}
+\end{bmatrix},
+\]</div>
+<p>so that</p>
+<div class="math notranslate nohighlight">
+\[
+{\bf T}:{\bf T} = {\bf\tilde{T}}\cdot{\bf\tilde{T}} = T_{11}^2 + T_{22}^2 + T_{33}^2 + 2\ T_{23}^2 + 2\ T_{13}^2 + 2\ T_{12}^2.
+\]</div>
+<p>In both notations, 4th order tensors with minor symetries, i.e. <span class="math notranslate nohighlight">\(T_{ijkl} = T_{jikl} = T_{ijlk}\)</span> (such as usual stiffness tensors) can be expressed as <span class="math notranslate nohighlight">\(6\times 6\)</span> matrices, and Mandel’s notation again preserves the contraction between 4th and 2nd order tensors, as well as transposition and inversion of 4th order tensors. <br />
+A classical stiffness tensor can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[
+{\bf D} = \lambda {\bf I_2}\otimes{\bf I_2} + 2\mu {\bf I_4},
+\]</div>
+<p>or in expanded index form:</p>
+<div class="math notranslate nohighlight">
+\[
+{\bf D}_{ijkl} = \lambda \delta_{ij}\delta_{kl} + \mu (\delta_{ik}\delta_{jl} + \delta_{il}\delta_{jk}).
+\]</div>
+<p>The Mandel notation of a symmetric 4th order tensor is:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{bmatrix}
+D_{1111} &amp; D_{1122} &amp; D_{1133} &amp; \sqrt{2}\ D_{1123} &amp; \sqrt{2}\ D_{1113} &amp; \sqrt{2}\ D_{1112} \\
+D_{2211} &amp; D_{2222} &amp; D_{2233} &amp; \sqrt{2}\ D_{2223} &amp; \sqrt{2}\ D_{2213} &amp; \sqrt{2}\ D_{2212} \\
+D_{3311} &amp; D_{3322} &amp; D_{3333} &amp; \sqrt{2}\ D_{3323} &amp; \sqrt{2}\ D_{3313} &amp; \sqrt{2}\ D_{3312} \\
+\sqrt{2}\ D_{2311} &amp; \sqrt{2}\ D_{2322} &amp; \sqrt{2}\ D_{2333} &amp; 2\ D_{2323} &amp; 2\ D_{2313} &amp; 2\ D_{2312} \\
+\sqrt{2}\ D_{1311} &amp; \sqrt{2}\ D_{1322} &amp; \sqrt{2}\ D_{1333} &amp; 2\ D_{1323} &amp; 2\ D_{1313} &amp; 2\ D_{1312} \\
+\sqrt{2}\ D_{1211} &amp; \sqrt{2}\ D_{1222} &amp; \sqrt{2}\ D_{1233} &amp; 2\ D_{1223} &amp; 2\ D_{1213} &amp; 2\ D_{1212}
+\end{bmatrix},
+\end{split}\]</div>
+<p>so the usual isotropic stiffness tensor reads:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{bmatrix}
+\lambda + 2\mu &amp; \lambda &amp; \lambda &amp; 0 &amp; 0 &amp; 0 \\
+\lambda &amp; \lambda +2\mu &amp; \lambda &amp; 0 &amp; 0 &amp; 0 \\
+\lambda &amp; \lambda &amp; \lambda + 2\mu &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 2 \mu &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 2 \mu &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 2 \mu
+\end{bmatrix}.
+\end{split}\]</div>
+<p>We verify that</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{bmatrix}
+\sigma_{xx}\\
+\sigma_{yy}\\
+\sigma_{zz}\\
+\sqrt{2}\ \sigma_{yz}\\
+\sqrt{2}\ \sigma_{xz}\\
+\sqrt{2}\ \sigma_{xy}
+\end{bmatrix} =
+\begin{bmatrix}
+\lambda + 2\mu &amp; \lambda &amp; \lambda &amp; 0 &amp; 0 &amp; 0 \\
+\lambda &amp; \lambda +2\mu &amp; \lambda &amp; 0 &amp; 0 &amp; 0 \\
+\lambda &amp; \lambda &amp; \lambda + 2\mu &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 2 \mu &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 2 \mu &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 2 \mu
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+\varepsilon_{xx}\\
+\varepsilon_{yy}\\
+\varepsilon_{zz}\\
+\sqrt{2}\ \varepsilon_{yz}\\
+\sqrt{2}\ \varepsilon_{xz}\\
+\sqrt{2}\ \varepsilon_{xy}
+\end{bmatrix} =
+\begin{bmatrix}
+\lambda (\varepsilon_{xx}+\varepsilon_{yy}+\varepsilon_{zz}) + 2\mu\varepsilon_{xx}\\
+\lambda (\varepsilon_{xx}+\varepsilon_{yy}+\varepsilon_{zz}) + 2\mu\varepsilon_{yy}\\
+\lambda (\varepsilon_{xx}+\varepsilon_{yy}+\varepsilon_{zz}) + 2\mu\varepsilon_{xx}\\
+2\sqrt{2}\ \mu\varepsilon_{yz}\\
+2\sqrt{2}\ \mu\varepsilon_{xz}\\
+2\sqrt{2}\ \mu\varepsilon_{xy}
+\end{bmatrix}
+\end{split}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">mandel_to_tensor2</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="mi">6</span><span class="p">,)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">T</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">T</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)],</span>
+                     <span class="p">[</span><span class="n">T</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">T</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)],</span>
+                     <span class="p">[</span><span class="n">T</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">T</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">T</span><span class="p">[</span><span class="mi">2</span><span class="p">]]])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tensor2_to_mandel</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="n">T</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="n">T</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">T</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">lame</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">nu</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">E</span><span class="o">*</span><span class="n">nu</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">nu</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">nu</span><span class="p">)),</span> <span class="n">E</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">nu</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">stiffness_tensor</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">+=</span><span class="n">lam</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+        <span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="mi">2</span><span class="o">*</span><span class="n">mu</span>
+    <span class="k">return</span> <span class="n">D</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">E</span> <span class="o">=</span> <span class="mf">1e10</span>
+<span class="n">nu</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">5e-4</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">5e-4</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">5e-4</span><span class="p">,</span> <span class="mf">5e-4</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+
+<span class="n">eps_M</span> <span class="o">=</span> <span class="n">tensor2_to_mandel</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">stiffness_tensor</span><span class="p">(</span><span class="o">*</span><span class="n">lame</span><span class="p">(</span><span class="n">E</span><span class="p">,</span><span class="n">nu</span><span class="p">))</span>
+<span class="n">sig_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">eps_M</span><span class="p">)</span>
+<span class="n">sig</span> <span class="o">=</span> <span class="n">mandel_to_tensor2</span><span class="p">(</span><span class="n">sig_M</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sig</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[-13888888.88888889,         0.        ,   4166666.66666667],
+       [        0.        , -13888888.88888889,   4166666.66666667],
+       [  4166666.66666667,   4166666.66666667,  -5555555.55555556]])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./numerical_ex"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="6_1D_Poroplasticity.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Coupled plasticity example: Thermal softening of a poroplastic solid</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#voigt-notation-for-symmetric-tensors">Voigt notation for symmetric tensors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mandel-notation">Mandel notation</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Maxime PIERRE
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
