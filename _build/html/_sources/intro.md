@@ -1,12 +1,28 @@
-# Welcome to PoreNum: Poromechanics with Numerical implementations
+# Welcome to *PoreNum*!
+[*Poromechanics with Numerical implementations*]
 
-This collection of small lessons and numerical example are aimed at anyone wanting to familiarize themselves with the theories of mechanics and physics of porous continua,
-and/or willing to delve into numerical implementations of poromechanical models.
-It is also suitable for whom wants to learn or review some basics of solving equation systems as well as python coding,
-which will be subsequently used in numerical examples.
+## What is it ?
+
+***PoreNum*** is built as a collection of small lectures and implementation examples on the subject of poromechanics,
+from the theoretical basis of poromechanics and necessary mathematical tools for model implementations to various concrete examples.
+It can be followed from beginning to end as a comprehensive lecture on numerical poromechanics, or specific parts of interest only can be selected.
+
+## For whom ?
+
+I designed this series of lectures with the ambition that anyone with some rudiments of mathematics and mechanics could follow it,
+making them as pedagogical and progressive as possible.
+Whether you are a skilled experimenter who wants to value their experimental results by complimenting them with numerical simulations,
+a young student willing to delve for the first time into poromechanics and numerical modelling, or simply curious,
+I hope you can learn something out of ***PoreNum***.
 
 ```{tableofcontents}
 ```
+
+## About the author
+
+I am currently a postdoctoral researcher at [Laboratoire Navier](https://www.navier-lab.fr), École nationale des ponts et chaussées.
+My research focuses on multi-physics couplings in porous media, with a strong emphasis on numerical methods.
+You can find more about the rest of my work on [my personal website](https://mhpierre.github.io).
 
 <!-- This is a small sample book to give you a feel for how book content is
 structured.

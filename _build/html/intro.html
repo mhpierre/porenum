@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Welcome to PoreNum: Poromechanics with Numerical implementations &#8212; PoreNum</title>
+    <title>Welcome to PoreNum! &#8212; PoreNum</title>
   
   
   
@@ -167,7 +167,7 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1 current active">
                 <a class="reference internal" href="#">
-                    Welcome to PoreNum: Poromechanics with Numerical implementations
+                    Welcome to PoreNum!
                 </a>
             </li>
         </ul>
@@ -362,7 +362,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -373,11 +375,21 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Welcome to PoreNum: Poromechanics with Numerical implementations</h1>
+    <h1>Welcome to PoreNum!</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-it">What is it ?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#for-whom">For whom ?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-the-author">About the author</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -387,12 +399,22 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="welcome-to-porenum-poromechanics-with-numerical-implementations">
-<h1>Welcome to PoreNum: Poromechanics with Numerical implementations<a class="headerlink" href="#welcome-to-porenum-poromechanics-with-numerical-implementations" title="Link to this heading">#</a></h1>
-<p>This collection of small lessons and numerical example are aimed at anyone wanting to familiarize themselves with the theories of mechanics and physics of porous continua,
-and/or willing to delve into numerical implementations of poromechanical models.
-It is also suitable for whom wants to learn or review some basics of solving equation systems as well as python coding,
-which will be subsequently used in numerical examples.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="welcome-to-porenum">
+<h1>Welcome to <em>PoreNum</em>!<a class="headerlink" href="#welcome-to-porenum" title="Link to this heading">#</a></h1>
+<p>[<em>Poromechanics with Numerical implementations</em>]</p>
+<section id="what-is-it">
+<h2>What is it ?<a class="headerlink" href="#what-is-it" title="Link to this heading">#</a></h2>
+<p><em><strong>PoreNum</strong></em> is built as a collection of small lectures and implementation examples on the subject of poromechanics,
+from the theoretical basis of poromechanics and necessary mathematical tools for model implementations to various concrete examples.
+It can be followed from beginning to end as a comprehensive lecture on numerical poromechanics, or specific parts of interest only can be selected.</p>
+</section>
+<section id="for-whom">
+<h2>For whom ?<a class="headerlink" href="#for-whom" title="Link to this heading">#</a></h2>
+<p>I designed this series of lectures with the ambition that anyone with some rudiments of mathematics and mechanics could follow it,
+making them as pedagogical and progressive as possible.
+Whether you are a skilled experimenter who wants to value their experimental results by complimenting them with numerical simulations,
+a young student willing to delve for the first time into poromechanics and numerical modelling, or simply curious,
+I hope you can learn something out of <em><strong>PoreNum</strong></em>.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
@@ -401,12 +423,19 @@ which will be subsequently used in numerical examples.</p>
 <li class="toctree-l1"><a class="reference internal" href="numerical_ex.html">Numerical implementation in poromechanics</a></li>
 </ul>
 </div>
+</section>
+<section id="about-the-author">
+<h2>About the author<a class="headerlink" href="#about-the-author" title="Link to this heading">#</a></h2>
+<p>I am currently a postdoctoral researcher at <a class="reference external" href="https://www.navier-lab.fr">Laboratoire Navier</a>, École nationale des ponts et chaussées.
+My research focuses on multi-physics couplings in porous media, with a strong emphasis on numerical methods.
+You can find more about the rest of my work on <a class="reference external" href="https://mhpierre.github.io">my personal website</a>.</p>
 <!-- This is a small sample book to give you a feel for how book content is
 structured.
 It shows off a few of the major file types, as well as some sample content.
 It does not go in-depth into any particular topic - check out [the Jupyter Book documentation](https://jupyterbook.org) for more information.
 
 Check out the content pages bundled with this sample book to see more. -->
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -455,6 +484,24 @@ Check out the content pages bundled with this sample book to see more. -->
             
             
               
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-it">What is it ?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#for-whom">For whom ?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-the-author">About the author</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
             
           </div>
           <footer class="bd-footer-content">
@@ -471,13 +518,6 @@ By Maxime PIERRE
   
   <div class="footer-item">
     
-
-  <p class="copyright">
-    
-      © Copyright 2025.
-      <br/>
-    
-  </p>
 
   </div>
   
