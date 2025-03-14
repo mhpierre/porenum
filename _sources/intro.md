@@ -15,8 +15,18 @@ Whether you are a skilled experimenter who wants to value their experimental res
 a young student willing to delve for the first time into poromechanics and numerical modelling, or simply curious,
 I hope you can learn something out of ***PoreNum***.
 
+
+## Contents
+
+This website is constituted of 3 main parts.
+A first section is dedicated to the theory of poromechanics, where we will explain the basis of thermodynamics for porous media and how to derive constitutive models.
+A second section tackles some prerequisites on numerical methods for solving equation systems, which we will rely on in the numerical implementations.
+Finally, the third section shows a number of implementation examples that will hopefully inspire you and allow you to write your own code for your application.
+Feel free to follow everything in order or directly jump into the part you are the most interested in !
+
 ```{tableofcontents}
 ```
+
 
 ## About the author
 
